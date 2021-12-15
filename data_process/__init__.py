@@ -1,4 +1,4 @@
 from .file_out import file_out
-#from .structured_array import str_array
+from .side_wall import side_wall
 from .data_read import data_3d
 

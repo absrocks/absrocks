@@ -34,8 +34,9 @@ def epsilon(xpt, ypt, zpt, lev_3d, mask_3d, x_3d, y_3d, z_3d, v3d):
     S[4, :, :] = 0.5 * (gradU[5, :, :, :] + gradU[7, :, :, :])
     S[5, :, :] = 1 * gradU[8, :, :, :]
 
-    epsilon = 2 * 1e-6 * (S[0, :, :] * S[0, :, :] + 2 * S[1, :, :] + 2 * S[2, :, :] + S[3, :, :] +
-                          2 * S[4, :, :] + S[5, :, :])
+    epsilon = 2 * 1e-6 * (S[0, :, :] * S[0, :, :] + 2 * S[1, :, :] * S[1, :, :] +
+                          2 * S[2, :, :] * S[2, :, :] + S[3, :, :] * S[3, :, :] +
+                          2 * S[4, :, :] * S[4, :, :] + S[5, :, :] * S[5, :, :])
     # # dissipation rate based on instantaneous velocity
 
     epsi_2d_z, con_z, depth_2d = depth_average(lev_3d, z_3d, epsilon, xpt, ypt, zpt, c_3d, 1)

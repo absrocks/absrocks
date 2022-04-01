@@ -128,7 +128,7 @@ if data_input.transient_data[0] == 'on':
             if data_input.total_energy == 'on':
                 from tsunami import te
                 case_output = 'total_energy'
-                param = ["pe", "ke", "te", "x"]
+                param = ["pe", "ke", "te", "v_avg", "x"]
                 fout, case_path = file_out(case_output, data_input, "te", T, i, param, data_input.time_write_shift)
                 try:
                     energy_data = te(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,

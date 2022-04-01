@@ -8,7 +8,7 @@ from tsunami import field_avg
 
 def te(xpt, ypt, zpt, lev_3d, mask_3d, z_3d, vel_3d):
     # print("minimum of x is",x_3d.min(), min(x))
-
+    # ff
     c_3d = 1 * mask_3d
     c_3d[lev_3d < 0], c_3d[lev_3d >= 0] = 0, 1
     ef_2d_z, con_z, depth_2d = depth_average(lev_3d, z_3d, vel_3d[0, :, :, :], xpt, ypt, zpt, c_3d, 1)

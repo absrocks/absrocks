@@ -10,3 +10,4 @@ from .eflux import eflux
 from .total_energy import te
 from .dissipation_rate import epsilon
 from .eflux_dissipation import flux_dissipation
+from .turbul import turbul

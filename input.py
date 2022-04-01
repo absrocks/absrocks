@@ -28,7 +28,7 @@ class flux_input:
     side_wall = 'on', 10, 'z'  # nullify the effect of side wall, mention the number of grid points to exclude.
     # and add direction along which side walls are oriented
     water_depth = 'off'
-    total_energy = 'off'
+    total_energy = 'on'
     turbulent_energy = 'off'
     turbulent_average = 'off'
     shear_data = 'off'

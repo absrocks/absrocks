@@ -143,7 +143,7 @@ if data_input.transient_data[0] == 'on':
                     energy_data = te(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
                                      points_3d[2, :, :, :], vel_3d)
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
-                Write_file(fout, np.vstack((energy_data, points_3d[0, :, 0, 0])).T, case_path, 4)
+                Write_file(fout, np.vstack((energy_data, points_3d[0, :, 0, 0])).T, case_path, 5)
                 print('The file writing ends at time =', T[i])
                 print('Total energy data files written in ', case_path)
                 print('********************************************************************************')

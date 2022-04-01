@@ -21,6 +21,4 @@ def te(xpt, ypt, zpt, lev_3d, mask_3d, z_3d, vel_3d):
          / (2 * 9.81)
     depth_1d = field_avg(depth_2d, 1, xpt, ypt, zpt, 'y')[0]
     te = depth_1d[:, 0, 0] + ke
-    #energy_data[:, 0], energy_data[:, 1], energy_data[:, 2], energy_data[:, 3] = depth_1d[:, 0, 0], ke, \
-                                                                                # te, x_3d[:, 0, 0]
-    return depth_1d[:, 0, 0], ke, te
+    return depth_1d[:, 0, 0], ke, te, vavg

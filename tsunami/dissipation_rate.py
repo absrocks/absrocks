@@ -38,7 +38,7 @@ def epsilon(xpt, ypt, zpt, lev_3d, mask_3d, x_3d, y_3d, z_3d, v3d):
                S[3, :, :] * S[3, :, :] + 2 * S[4, :, :] * S[4, :, :] + S[5, :, :] * S[5, :, :])
     # # dissipation rate based on instantaneous velocity
 
-    #epsi_2d_z, con_z, depth_2d = depth_average(lev_3d, z_3d, epsilon, xpt, ypt, zpt, c_3d, 1)
-    #epsi_1d, con_y = field_avg(1 * epsi_2d_z, 1, xpt, ypt, zpt, 'y')
+    epsi_2d_z, con_z, depth_2d = depth_average(lev_3d, z_3d, epsilon, xpt, ypt, zpt, c_3d, 1)
+    epsi_1d, con_y = field_avg(1 * epsi_2d_z, 1, xpt, ypt, zpt, 'y')
 
-    return epsilon, gradU
+    return epsilon, gradU, epsi_1d

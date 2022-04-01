@@ -9,27 +9,29 @@ import os
 
 class flux_input:
     # Source directory where data is present
-    src_dir = '/media/abhishek/WD-phd/transcend/PHD_2019/tsunami/dam_break_wet_case/les_swash/' \
-              'csv_data'
-    case_dir = '3d_data_kim'  # flex-y1e6, rigid-rect
+    src_dir = '/Volumes/10.0.0.104/seagate/tsunami/arnason_et_al/multi-cyl/pent-case/3d_data/flex'
+    # Kim data source dir = '/media/abhishek/WD-phd/transcend/PHD_2019/tsunami/dam_break_wet_case/les_swash/csv_data'
+    case_dir = 'flex-single-1e4'
+    # Kim data case dir = '3d_data_kim'  # flex-y1e6, rigid-rect
     # destination directory
-    dest_dir = '/media/abhishek/WD-phd/transcend/PHD_2019/tsunami/dam_break_wet_case/les_swash/' \
-               'csv_data/3d_data_kim/output'  # shortcut o
+    dest_dir = '/Volumes/10.0.0.104/seagate/tsunami/arnason_et_al/multi-cyl/pent-case/output'
+    # Kim output data =    '/media/abhishek/WD-phd/transcend/PHD_2019/tsunami/dam_break_wet_case/les_swash/
+    # csv_data/3d_data_kim/output'  # shortcut o
 
     data_directory = os.path.join(src_dir, case_dir)
-    t_ini, t_fin = 0, 7
+    t_ini, t_fin = 0, 10.4
     dT = 0.2
-    time_write_shift = 3.6
-    transient_data = 'off', 0, 6.6  # time interval
+    time_write_shift = 0
+    transient_data = 'on', 3.6, 10.2  # time interval
     data_type = '3d'
     levsmooth = 'off'
     vel_field_avg = 'off'
     energy_flux = 'off'  # specify the time interval
-    side_wall = 'on', 10, 'z'  # nullify the effect of side wall, mention the number of grid points to exclude.
+    side_wall = 'off', 10, 'z'  # nullify the effect of side wall, mention the number of grid points to exclude.
     # and add direction along which side walls are oriented
     water_depth = 'off'
     total_energy = 'on'
-    turbulent_energy = 'off'
+    turbulent_energy = 'on'
     turbulent_average = 'off'
     shear_data = 'off'
     vel_profile = 'off', 15  # select at which stream-wise location you want to get span-averaged velocity profile
@@ -37,7 +39,9 @@ class flux_input:
     wall_shear_stress = 'off'
     lev_set = 0
     int_avg = 'field'  # field, int
-    nelx, nely, nelz = 1140, 92, 90  # 400, 106, 61  # 1000, 160, 92, # 600
+    nelx, nely, nelz = 600, 160, 92  # 400, 106, 61  # 1000, 160, 92, # 600
+    # Kim data : nelx, nely, nelz = 1140, 92, 90
+    # Dam break pent flexible :
     # water_vol = 6 * 3.5 * 4  # L * D * W, dry case
     probe_data = 'off'
     force = 'off'
@@ -46,6 +50,6 @@ class flux_input:
     slice_interpolation = 'off'
     flux_dissipation = 'off'
     epsilon = 'off'
-    fname = '3d_data_kim'
+    fname = '3d_data' #'3d_data_kim'
     fe = '_'  # '0.'
     filename = fname + fe  # + str(i) + '.csv'

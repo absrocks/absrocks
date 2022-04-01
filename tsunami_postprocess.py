@@ -60,9 +60,10 @@ if data_input.transient_data[0] == 'on':
         if ts <= T[i] <= tf:
             fin = data_input.filename + str(i) + '.csv'
             print("The source data file name is", fin)
-            #timeskipdata = 3.6
+            # timeskipdata = 3.6
             if data_input.energy_flux == 'on':
                 from tsunami import eflux
+
                 case_output = 'energy_flux'
                 param = ["Kflux:0", "Kflux:1", "Kflux:2", "Pflux:0", "Pflux:1", "Pflux:2", "Tflux:0", "Tflux:1",
                          "Tflux:2", "x"]
@@ -83,12 +84,14 @@ if data_input.transient_data[0] == 'on':
 
             if data_input.flux_dissipation == 'on':
                 from tsunami import flux_dissipation
+
                 case_output = 'flux_dissipation'
                 param = ["dflux_KE", "dflux_PE", "dflux_TE", "x"]
-                fout, case_path = file_out(case_output, data_input, "dis_flux", T, i, param, data_input.time_write_shift)
+                fout, case_path = file_out(case_output, data_input, "dis_flux", T, i, param,
+                                           data_input.time_write_shift)
                 try:
                     flux_dis = flux_dissipation(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
-                                  points_3d[1, :, :, :],points_3d[2, :, :, :], vel_3d)
+                                                points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
                 except:
                     print("*** Calling the parameters from the data read module ***")
                     data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
@@ -105,28 +108,32 @@ if data_input.transient_data[0] == 'on':
 
             if data_input.epsilon == 'on':
                 from tsunami import epsilon
+
                 case_output = 'dissipation_rate'
                 param = ["epsilon", "x"]
                 fout, case_path = file_out(case_output, data_input, "epsion", T, i, param, data_input.time_write_shift)
                 try:
-                    eps = epsilon(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,points_3d[0, :, :, :],
-                                  points_3d[1, :, :, :],points_3d[2, :, :, :], vel_3d)
+                    eps = epsilon(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
+                                  points_3d[0, :, :, :],
+                                  points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
                 except:
                     print("*** Calling the parameters from the data read module ***")
                     data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
                                                  data_input.data_directory, fin, data_input.data_type)
                     points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
                     lev_3d, mask_3d = data_obj.lev_3d()
-                    eps = epsilon(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,points_3d[0, :, :, :],
-                                  points_3d[1, :, :, :],points_3d[2, :, :, :], vel_3d)
+                    eps = epsilon(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
+                                  points_3d[0, :, :, :],
+                                  points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)[2]
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
-                Write_file(fout, np.vstack((eps, points_3d[0, :, 0, 0])).T, case_path, 2)
+                Write_file(fout, np.vstack((eps, points_3d[0, :, 0, 0])).T, case_path, np.shape(eps)[0] + 1)
                 print('The file writing ends at time =', T[i])
                 print('Energy dissipation rate data files written in ', case_path)
                 print('********************************************************************************')
 
             if data_input.total_energy == 'on':
                 from tsunami import te
+
                 case_output = 'total_energy'
                 param = ["pe", "ke", "te", "v_avg", "x"]
                 fout, case_path = file_out(case_output, data_input, "te", T, i, param, data_input.time_write_shift)
@@ -143,73 +150,232 @@ if data_input.transient_data[0] == 'on':
                     energy_data = te(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
                                      points_3d[2, :, :, :], vel_3d)
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
-                Write_file(fout, np.vstack((energy_data, points_3d[0, :, 0, 0])).T, case_path, 5)
+                Write_file(fout, np.vstack((energy_data[0], energy_data[1], energy_data[2], energy_data[3],
+                                            points_3d[0, :, 0, 0])).T, case_path, 5)
                 print('The file writing ends at time =', T[i])
                 print('Total energy data files written in ', case_path)
                 print('********************************************************************************')
-multiple_data = 'off'
-# set time steps
-# dT = 0.25
-# t_ini, t_fin = 0, 10
+
+            if data_input.turbulent_energy == 'on':
+                from tsunami import prime
+
+                case_output = 'turbulent_kinetic'
+                param = ["tke", "x"]
+                fout, case_path = file_out(case_output, data_input, "tke", T, i, param, data_input.time_write_shift)
+                try:
+                    tke = prime(data_input.xpt, data_input.ypt, data_input.zpt, vel_3d, lev_3d, mask_3d)[2]
+                except:
+                    print("*** Calling the parameters from the data read module ***")
+                    data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
+                                                 data_input.data_directory, fin, data_input.data_type)
+                    points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
+                    lev_3d, mask_3d = data_obj.lev_3d()
+                    tke = prime(data_input.xpt, data_input.ypt, data_input.zpt, vel_3d, lev_3d, mask_3d)[2]
+                # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
+                Write_file(fout, np.vstack((tke, points_3d[0, :, 0, 0])).T, case_path, 2)
+                print('The file writing ends at time =', T[i])
+                print('Energy dissipation rate data files written in ', case_path)
+                print('********************************************************************************')
+else:
+    multiple_data = 'off'
+    # set time steps
+    # dT = 0.25
+    # t_ini, t_fin = 0, 10
 
 
-if data_input.vel_field_avg == 'on':
-    if os.path.exists(case_type):
-        # path, cc = os.path.split(os.getcwd())
-        # path = directory + '/' + case_type
-        dir = 'vts'
-        vft = t_final  # 2.0
-        tind = np.where(np.round(T, 2) == vft)
-        case, types = os.path.split(case_type)
-        print('depth average calculation will be done at t =', vft)
-        # try:
-        energy_flux_data, total_energy_data, energy_theory = eflux(tind[0][0])
-        if not os.path.exists(case_type + '/' + dir):
-            os.makedirs(case_type + '/' + dir)
-        x3d, y3d, z3d, v_z, con_z, lev_3d, mask_3d, depth_2d, v_y, con_y, v_mag_3d = energy_flux_data
-        gridToVTK(os.path.join(case_type, dir, 'depth_av_vel' + '_' + 't' + '_' + str(vft) + '_' + types), x3d, y3d,
-                  z3d,
-                  pointData={"VELOCZ": v_z, "CONZ": con_z, "VELOCY": v_y, "CONY": con_y, "LEVEL": lev_3d,
-                             "Mask3D": mask_3d, "depth2d": depth_2d, "VELOC3d": v_mag_3d})  # "./depth_av_vel"
-        print('depth average velocity file written in ', case_type)
-        print(
-            '***********************************************************************************************************')
-    else:
-        sys.exit("The case directory does not exist, check the input file")
-
-if data_input.turbulent_energy == 'on':
-    if os.path.exists(case_type):
-        # path = directory + '/' + case_type
-        dir = 'vts'
-        vft_turb = t_final  # 2.0
-        tind = np.where(np.round(T, 2) == vft_turb)
-        case, types = os.path.split(case_type)
-        if vel_field_avg == 'on' and vft_turb == vft:
-            print('turbulent statistics calculation will be done at t =', vft_turb)
-            print('Skip the recalculation of turbulent statistics')
-            x_3d, y_3d, z_3d, lev_3d, c_3d, tke_3d, r_stress, tke_y, r_stress_y, \
-            tke_z, r_stress_z, depth_2d, con_y, con_z = total_energy_data
-
-            gridToVTK(os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft) + '_' + types), x_3d,
-                      y_3d,
-                      z_3d,
-                      pointData={"LEVEL": lev_3d, "CON3d": c_3d, "TKE3d": tke_3d, "RUU_3d": r_stress[0, :, :, :],
-                                 "RVV_3d": r_stress[1, :, :, :], "RWW_3d": r_stress[2, :, :, :],
-                                 "RUV_3d": r_stress[3, :, :, :], "RUW_3d": r_stress[4, :, :, :],
-                                 "RVW_3d": r_stress[5, :, :, :], "TKEY": tke_y,
-                                 "RUUY": r_stress_y[0, :, :, :], "RVVY": r_stress_y[1, :, :, :],
-                                 "RWWY": r_stress_y[2, :, :, :], "RUVY": r_stress_y[3, :, :, :],
-                                 "RUWY": r_stress_y[4, :, :, :], "RVWY": r_stress_y[5, :, :, :],
-                                 "TKEZ": tke_z, "RUUZ": r_stress_z[0, :, :, :],
-                                 "RVVZ": r_stress_z[1, :, :, :], "RWWZ": r_stress_z[2, :, :, :],
-                                 "RUVZ": r_stress_z[3, :, :, :], "RUWZ": r_stress_z[4, :, :, :],
-                                 "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y, "CONZ": con_z})
-        elif turbulent_average == 'on':
-            print('Turbulent average module is on')
-
-            tt = [0.8, 1.2, 1.6, 1.8]  # 0.8, 1.2, 1.6,
+    if data_input.vel_field_avg == 'on':
+        if os.path.exists(case_type):
+            # path, cc = os.path.split(os.getcwd())
             # path = directory + '/' + case_type
-            dir = 'turbulent_data'
+            dir = 'vts'
+            vft = t_final  # 2.0
+            tind = np.where(np.round(T, 2) == vft)
+            case, types = os.path.split(case_type)
+            print('depth average calculation will be done at t =', vft)
+            # try:
+            energy_flux_data, total_energy_data, energy_theory = eflux(tind[0][0])
+            if not os.path.exists(case_type + '/' + dir):
+                os.makedirs(case_type + '/' + dir)
+            x3d, y3d, z3d, v_z, con_z, lev_3d, mask_3d, depth_2d, v_y, con_y, v_mag_3d = energy_flux_data
+            gridToVTK(os.path.join(case_type, dir, 'depth_av_vel' + '_' + 't' + '_' + str(vft) + '_' + types), x3d, y3d,
+                      z3d,
+                      pointData={"VELOCZ": v_z, "CONZ": con_z, "VELOCY": v_y, "CONY": con_y, "LEVEL": lev_3d,
+                                 "Mask3D": mask_3d, "depth2d": depth_2d, "VELOC3d": v_mag_3d})  # "./depth_av_vel"
+            print('depth average velocity file written in ', case_type)
+            print(
+                '***********************************************************************************************************')
+        else:
+            sys.exit("The case directory does not exist, check the input file")
+
+    if data_input.turbulent_energy == 'on':
+        if os.path.exists(case_type):
+            # path = directory + '/' + case_type
+            dir = 'vts'
+            vft_turb = t_final  # 2.0
+            tind = np.where(np.round(T, 2) == vft_turb)
+            case, types = os.path.split(case_type)
+            if vel_field_avg == 'on' and vft_turb == vft:
+                print('turbulent statistics calculation will be done at t =', vft_turb)
+                print('Skip the recalculation of turbulent statistics')
+                x_3d, y_3d, z_3d, lev_3d, c_3d, tke_3d, r_stress, tke_y, r_stress_y, \
+                tke_z, r_stress_z, depth_2d, con_y, con_z = total_energy_data
+
+                gridToVTK(os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft) + '_' + types), x_3d,
+                          y_3d,
+                          z_3d,
+                          pointData={"LEVEL": lev_3d, "CON3d": c_3d, "TKE3d": tke_3d, "RUU_3d": r_stress[0, :, :, :],
+                                     "RVV_3d": r_stress[1, :, :, :], "RWW_3d": r_stress[2, :, :, :],
+                                     "RUV_3d": r_stress[3, :, :, :], "RUW_3d": r_stress[4, :, :, :],
+                                     "RVW_3d": r_stress[5, :, :, :], "TKEY": tke_y,
+                                     "RUUY": r_stress_y[0, :, :, :], "RVVY": r_stress_y[1, :, :, :],
+                                     "RWWY": r_stress_y[2, :, :, :], "RUVY": r_stress_y[3, :, :, :],
+                                     "RUWY": r_stress_y[4, :, :, :], "RVWY": r_stress_y[5, :, :, :],
+                                     "TKEZ": tke_z, "RUUZ": r_stress_z[0, :, :, :],
+                                     "RVVZ": r_stress_z[1, :, :, :], "RWWZ": r_stress_z[2, :, :, :],
+                                     "RUVZ": r_stress_z[3, :, :, :], "RUWZ": r_stress_z[4, :, :, :],
+                                     "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y, "CONZ": con_z})
+            elif turbulent_average == 'on':
+                print('Turbulent average module is on')
+
+                tt = [0.8, 1.2, 1.6, 1.8]  # 0.8, 1.2, 1.6,
+                # path = directory + '/' + case_type
+                dir = 'turbulent_data'
+                if not os.path.exists(case_type + '/' + dir):
+                    os.makedirs(case_type + '/' + dir)
+                l = 0
+                case_path = case_type + '/' + dir
+                case, types = os.path.split(case_type)
+                for i in range(len(T)):
+                    if l == np.size(tt):
+                        print('l', l)
+                        break
+                    elif T[i] == tt[l]:
+                        fname = 'turbulent' + '_' + str(T[i]) + '.dat'
+                        energy_flux_data, total_energy_data, energy_theory = eflux(i)
+                        tke1d = energy_theory[0]
+                        Write_file(fname, tke1d, case_path, 2)
+                        print('The current time is =', T[i])
+                        l = l + 1
+
+                print('turbulent average files written in ', case_path)
+                print(
+                    '***********************************************************************************************************')
+
+            elif shear_data == 'on':
+                print('shear data module is on')
+                # path = directory + '/' + case_type
+                dir = 'vts'
+                vft = t_final  # 2.0
+                tind = np.where(T == vft)
+                case, types = os.path.split(case_type)
+                print('turbulent statistics will be calculated at t =', vft)
+                # try:
+                energy_flux_data, total_energy_data, energy_theory = eflux(tind[0][0])
+                if not os.path.exists(case_type + '/' + dir):
+                    os.makedirs(case_type + '/' + dir)
+                # x3d, y3d, z3d, tau_xy, tau_xz, tau_yz, con_z, tau_xy_y, tau_xz_y, tau_yz_y, \
+                # con_y, tau_xy_z, tau_xz_z, tau_yz_z, lev_3d, uprime, vprime, wprime, mask_3d, c_3d = total_energy_data
+                x3d, y3d, z3d, lev_3d, mask_3d, c_3d, tp, uy, vy, wy, u, v, w, \
+                K_span, K_in = total_energy_data
+                # print(x3d.max(),x3d.min())
+
+                '''
+                gridToVTK(os.path.join(case_type, dir, 'shear_stress' + '_' + 't' + '_' + str(vft) + '_' + types), x3d, y3d,
+                          z3d,
+                          pointData={"TAUX": tau_xy, "TAUY": tau_yz, "TAUZ": tau_xz, "CONZ": con_z, "LEVEL": lev_3d,
+                                     "Mask3D": mask_3d, "TAUX_Y": tau_xy_y, "TAUY_Y": tau_yz_y, "TAUZ_Y": tau_xz_y,
+                                     "CONY": con_y, "TAUX_Z": tau_xy_z, "TAUY_Z": tau_yz_z, "TAUZ_Z": tau_xz_z,
+                                     "c_3d": c_3d, "UPRIME": uprime, "VPRIME": vprime, "WPRIME": wprime, "K":K})
+                '''
+                gridToVTK(os.path.join(case_type, dir, 'turbulence_stat' + '_' + 't' + '_' + str(vft) + '_' + types),
+                          x3d,
+                          y3d,
+                          z3d,
+                          pointData={"Turbul": tp, "LEVEL": lev_3d,
+                                     "Mask3D": mask_3d, "c_3d": c_3d,
+                                     "UY": uy, "VY": vy, "WY": wy, "U": u, "V": v, "W": w,
+                                     "K_Y": K_span, "K_in": K_in})
+                print('turbulent statistics file written in ', case_type)
+                print(
+                    '***********************************************************************************************************')
+
+            else:
+                print('Only turbulent module is on')
+                print('turbulent statistics calculation will be done at t =', vft_turb)
+                energy_flux_data, total_energy_data, energy_theory = eflux(tind[0][0])
+                if not os.path.exists(case_type + '/' + dir):
+                    os.makedirs(case_type + '/' + dir)
+                x_3d, y_3d, z_3d, lev_3d, c_3d, tke_3d, r_stress, tke_y, r_stress_y, \
+                tke_z, r_stress_z, depth_2d, con_y, con_z, v_mag_3d = total_energy_data
+
+                gridToVTK(os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft_turb) + '_' + types),
+                          x_3d,
+                          y_3d,
+                          z_3d,
+                          pointData={"LEVEL": lev_3d, "CON3d": c_3d, "TKE3d": tke_3d, "RUU_3d": r_stress[0, :, :, :],
+                                     "RVV_3d": r_stress[1, :, :, :], "RWW_3d": r_stress[2, :, :, :],
+                                     "RUV_3d": r_stress[3, :, :, :], "RUW_3d": r_stress[4, :, :, :],
+                                     "RVW_3d": r_stress[5, :, :, :], "TKEY": tke_y,
+                                     "RUUY": r_stress_y[0, :, :, :], "RVVY": r_stress_y[1, :, :, :],
+                                     "RWWY": r_stress_y[2, :, :, :], "RUVY": r_stress_y[3, :, :, :],
+                                     "RUWY": r_stress_y[4, :, :, :], "RVWY": r_stress_y[5, :, :, :],
+                                     "TKEZ": tke_z, "RUUZ": r_stress_z[0, :, :, :],
+                                     "RVVZ": r_stress_z[1, :, :, :], "RWWZ": r_stress_z[2, :, :, :],
+                                     "RUVZ": r_stress_z[3, :, :, :], "RUWZ": r_stress_z[4, :, :, :], "V_mag": v_mag_3d,
+                                     "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y, "CONZ": con_z})
+                # except:
+                # print('File location error!!!!! Check the directory location defined in the input file, flies are not found')
+
+            print('turbulent statistics file written in ', case_type)
+            print(
+                '***********************************************************************************************************')
+        else:
+            sys.exit("The case directory does not exist, check the input file")
+
+    if data_input.water_depth == 'on':
+        dir = 'depth_data'
+        if os.path.exists(case_type):
+            if not os.path.exists(case_type + '/' + dir):
+                os.makedirs(case_type + '/' + dir)
+            l = 0
+            case_path = case_type + '/' + dir
+            case, types = os.path.split(case_type)
+            for i in range(len(T)):
+                print('time', np.round(T[i], 2))
+                if T[i] >= 0:
+                    fname = 'depth' + '_' + str(T[i]) + '.dat'
+                    energy_flux_data, total_energy_data, energy_theory = eflux(i)
+                    depth1d = energy_theory[0]
+                    Write_file(fname, depth1d, case_path, 3)
+                    print('The current time is =', T[i])
+                    l = l + 1
+                if i == 0:
+                    cs = case_type.replace('/', '_')
+                    with open(os.path.join(case_path, 'depth1d' + '_' + str(
+                            slice_loc) + '.txt'), 'a+') as fn:
+                        fn.write("depth    velocity     time   \n")
+                    fn.close()
+                for ipt in range(len(depth1d[:, 2])):
+                    if depth1d[ipt, 2] == slice_loc:
+                        with open(os.path.join(case_path, 'depth1d' + '_' + str(
+                                slice_loc) + '.txt'), 'a+') as fn:
+                            fn.write(
+                                "%.5f %.5f %.3f \n" % (float(depth1d[ipt, 0]), float(depth1d[ipt, 1]), T[i]))
+                    print("The output file written line for depth =", i + 1)
+            print("The time is =", T[i])
+
+            fn.close()
+            print('water depth files written in ', case_path)
+            print(
+                '***********************************************************************************************************')
+        else:
+            sys.exit("The case directory does not exist, check the input file")
+
+    if data_input.vel_profile[0] == 'on':
+        if os.path.exists(case_type):
+            tt = [0.8, 1.2, 1.6, 1.8]
+            # path = directory + '/' + case_type
+            dir = 'vel_profile_data'
             if not os.path.exists(case_type + '/' + dir):
                 os.makedirs(case_type + '/' + dir)
             l = 0
@@ -219,204 +385,68 @@ if data_input.turbulent_energy == 'on':
                 if l == np.size(tt):
                     print('l', l)
                     break
-                elif T[i] == tt[l]:
-                    fname = 'turbulent' + '_' + str(T[i]) + '.dat'
+                print('time', np.round(T[i], 2))
+                if np.round(T[i], 2) == tt[l]:
+                    fname = 'vel_profile' + '_' + 'x_' + str(vel_profile[1]) + '_t_' + str(T[i]) + '.dat'
                     energy_flux_data, total_energy_data, energy_theory = eflux(i)
-                    tke1d = energy_theory[0]
-                    Write_file(fname, tke1d, case_path, 2)
+                    vel_z = energy_theory[0]
+                    # print('size', np.shape(vel_z))
+                    Write_file(fname, vel_z, case_path, 5)
                     print('The current time is =', T[i])
                     l = l + 1
-
-            print('turbulent average files written in ', case_path)
+            print('velocity profile data files written in ', case_path)
             print(
                 '***********************************************************************************************************')
-
-        elif shear_data == 'on':
-            print('shear data module is on')
-            # path = directory + '/' + case_type
-            dir = 'vts'
-            vft = t_final  # 2.0
-            tind = np.where(T == vft)
-            case, types = os.path.split(case_type)
-            print('turbulent statistics will be calculated at t =', vft)
-            # try:
-            energy_flux_data, total_energy_data, energy_theory = eflux(tind[0][0])
-            if not os.path.exists(case_type + '/' + dir):
-                os.makedirs(case_type + '/' + dir)
-            # x3d, y3d, z3d, tau_xy, tau_xz, tau_yz, con_z, tau_xy_y, tau_xz_y, tau_yz_y, \
-            # con_y, tau_xy_z, tau_xz_z, tau_yz_z, lev_3d, uprime, vprime, wprime, mask_3d, c_3d = total_energy_data
-            x3d, y3d, z3d, lev_3d, mask_3d, c_3d, tp, uy, vy, wy, u, v, w, \
-            K_span, K_in = total_energy_data
-            # print(x3d.max(),x3d.min())
-
-            '''
-            gridToVTK(os.path.join(case_type, dir, 'shear_stress' + '_' + 't' + '_' + str(vft) + '_' + types), x3d, y3d,
-                      z3d,
-                      pointData={"TAUX": tau_xy, "TAUY": tau_yz, "TAUZ": tau_xz, "CONZ": con_z, "LEVEL": lev_3d,
-                                 "Mask3D": mask_3d, "TAUX_Y": tau_xy_y, "TAUY_Y": tau_yz_y, "TAUZ_Y": tau_xz_y,
-                                 "CONY": con_y, "TAUX_Z": tau_xy_z, "TAUY_Z": tau_yz_z, "TAUZ_Z": tau_xz_z,
-                                 "c_3d": c_3d, "UPRIME": uprime, "VPRIME": vprime, "WPRIME": wprime, "K":K})
-            '''
-            gridToVTK(os.path.join(case_type, dir, 'turbulence_stat' + '_' + 't' + '_' + str(vft) + '_' + types),
-                      x3d,
-                      y3d,
-                      z3d,
-                      pointData={"Turbul": tp, "LEVEL": lev_3d,
-                                 "Mask3D": mask_3d, "c_3d": c_3d,
-                                 "UY": uy, "VY": vy, "WY": wy, "U": u, "V": v, "W": w,
-                                 "K_Y": K_span, "K_in": K_in})
-            print('turbulent statistics file written in ', case_type)
-            print(
-                '***********************************************************************************************************')
-
         else:
-            print('Only turbulent module is on')
-            print('turbulent statistics calculation will be done at t =', vft_turb)
-            energy_flux_data, total_energy_data, energy_theory = eflux(tind[0][0])
+            sys.exit("The case directory does not exist, check the input file")
+
+    if data_input.wall_shear_stress == 'on':
+        if os.path.exists(case_type):
+            tt = np.round(np.arange(0, 10, 1), 2)
+            # path = directory + '/' + case_type
+            dir = 'wall_shear_data'
             if not os.path.exists(case_type + '/' + dir):
                 os.makedirs(case_type + '/' + dir)
-            x_3d, y_3d, z_3d, lev_3d, c_3d, tke_3d, r_stress, tke_y, r_stress_y, \
-            tke_z, r_stress_z, depth_2d, con_y, con_z, v_mag_3d = total_energy_data
+            l = 0
+            case_path = case_type + '/' + dir
+            case, types = os.path.split(case_type)
+            for i in range(len(T)):
+                if T[i] >= tt[0]:
+                    fname = 'shear_sp' + '_' + str(T[i]) + '.dat'
+                    energy_flux_data, total_energy_data, energy_theory = eflux(i)
+                    wall_shear = energy_theory[0]
+                    Write_file(fname, wall_shear, case_path, 2)
+                    print('The current time is =', T[i])
+                    l = l + 1
+            print('wall shear stress files written in ', case_path)
+            print(
+                '***********************************************************************************************************')
+        else:
+            sys.exit("The case directory does not exist, check the input file")
 
-            gridToVTK(os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft_turb) + '_' + types),
-                      x_3d,
-                      y_3d,
-                      z_3d,
-                      pointData={"LEVEL": lev_3d, "CON3d": c_3d, "TKE3d": tke_3d, "RUU_3d": r_stress[0, :, :, :],
-                                 "RVV_3d": r_stress[1, :, :, :], "RWW_3d": r_stress[2, :, :, :],
-                                 "RUV_3d": r_stress[3, :, :, :], "RUW_3d": r_stress[4, :, :, :],
-                                 "RVW_3d": r_stress[5, :, :, :], "TKEY": tke_y,
-                                 "RUUY": r_stress_y[0, :, :, :], "RVVY": r_stress_y[1, :, :, :],
-                                 "RWWY": r_stress_y[2, :, :, :], "RUVY": r_stress_y[3, :, :, :],
-                                 "RUWY": r_stress_y[4, :, :, :], "RVWY": r_stress_y[5, :, :, :],
-                                 "TKEZ": tke_z, "RUUZ": r_stress_z[0, :, :, :],
-                                 "RVVZ": r_stress_z[1, :, :, :], "RWWZ": r_stress_z[2, :, :, :],
-                                 "RUVZ": r_stress_z[3, :, :, :], "RUWZ": r_stress_z[4, :, :, :], "V_mag": v_mag_3d,
-                                 "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y, "CONZ": con_z})
-            # except:
-            # print('File location error!!!!! Check the directory location defined in the input file, flies are not found')
-
-        print('turbulent statistics file written in ', case_type)
-        print(
-            '***********************************************************************************************************')
-    else:
-        sys.exit("The case directory does not exist, check the input file")
-
-if data_input.water_depth == 'on':
-    dir = 'depth_data'
-    if os.path.exists(case_type):
-        if not os.path.exists(case_type + '/' + dir):
-            os.makedirs(case_type + '/' + dir)
-        l = 0
-        case_path = case_type + '/' + dir
-        case, types = os.path.split(case_type)
-        for i in range(len(T)):
-            print('time', np.round(T[i], 2))
-            if T[i] >= 0:
-                fname = 'depth' + '_' + str(T[i]) + '.dat'
-                energy_flux_data, total_energy_data, energy_theory = eflux(i)
-                depth1d = energy_theory[0]
-                Write_file(fname, depth1d, case_path, 3)
-                print('The current time is =', T[i])
-                l = l + 1
-            if i == 0:
-                cs = case_type.replace('/', '_')
-                with open(os.path.join(case_path, 'depth1d' + '_' + str(
-                        slice_loc) + '.txt'), 'a+') as fn:
-                    fn.write("depth    velocity     time   \n")
-                fn.close()
-            for ipt in range(len(depth1d[:, 2])):
-                if depth1d[ipt, 2] == slice_loc:
-                    with open(os.path.join(case_path, 'depth1d' + '_' + str(
-                            slice_loc) + '.txt'), 'a+') as fn:
-                        fn.write(
-                            "%.5f %.5f %.3f \n" % (float(depth1d[ipt, 0]), float(depth1d[ipt, 1]), T[i]))
-                print("The output file written line for depth =", i + 1)
-        print("The time is =", T[i])
-
-        fn.close()
-        print('water depth files written in ', case_path)
-        print(
-            '***********************************************************************************************************')
-    else:
-        sys.exit("The case directory does not exist, check the input file")
-
-if data_input.vel_profile[0] == 'on':
-    if os.path.exists(case_type):
-        tt = [0.8, 1.2, 1.6, 1.8]
-        # path = directory + '/' + case_type
-        dir = 'vel_profile_data'
-        if not os.path.exists(case_type + '/' + dir):
-            os.makedirs(case_type + '/' + dir)
-        l = 0
-        case_path = case_type + '/' + dir
-        case, types = os.path.split(case_type)
-        for i in range(len(T)):
-            if l == np.size(tt):
-                print('l', l)
-                break
-            print('time', np.round(T[i], 2))
-            if np.round(T[i], 2) == tt[l]:
-                fname = 'vel_profile' + '_' + 'x_' + str(vel_profile[1]) + '_t_' + str(T[i]) + '.dat'
-                energy_flux_data, total_energy_data, energy_theory = eflux(i)
-                vel_z = energy_theory[0]
-                # print('size', np.shape(vel_z))
-                Write_file(fname, vel_z, case_path, 5)
-                print('The current time is =', T[i])
-                l = l + 1
-        print('velocity profile data files written in ', case_path)
-        print(
-            '***********************************************************************************************************')
-    else:
-        sys.exit("The case directory does not exist, check the input file")
-
-if data_input.wall_shear_stress == 'on':
-    if os.path.exists(case_type):
-        tt = np.round(np.arange(0, 10, 1), 2)
-        # path = directory + '/' + case_type
-        dir = 'wall_shear_data'
-        if not os.path.exists(case_type + '/' + dir):
-            os.makedirs(case_type + '/' + dir)
-        l = 0
-        case_path = case_type + '/' + dir
-        case, types = os.path.split(case_type)
-        for i in range(len(T)):
-            if T[i] >= tt[0]:
-                fname = 'shear_sp' + '_' + str(T[i]) + '.dat'
-                energy_flux_data, total_energy_data, energy_theory = eflux(i)
-                wall_shear = energy_theory[0]
-                Write_file(fname, wall_shear, case_path, 2)
-                print('The current time is =', T[i])
-                l = l + 1
-        print('wall shear stress files written in ', case_path)
-        print(
-            '***********************************************************************************************************')
-    else:
-        sys.exit("The case directory does not exist, check the input file")
-
-if data_input.dam_front == 'on':
-    if os.path.exists(case_type):
-        tt = np.round(np.arange(0, 10, 1), 2)
-        # path = directory + '/' + case_type
-        dir = 'dam_front_data'
-        if not os.path.exists(case_type + '/' + dir):
-            os.makedirs(case_type + '/' + dir)
-        l = 0
-        case_path = case_type + '/' + dir
-        case, types = os.path.split(case_type)
-        for i in range(len(T)):
-            if T[i] >= tt[0]:
-                fname = 'dam_front_sp' + '_' + str(T[i]) + '.dat'
-                energy_flux_data, total_energy_data, energy_theory = eflux(i)
-                dam_s = energy_theory
-                Write_file(fname, dam_s, case_path, 1)
-                print('The current time is =', T[i])
-                l = l + 1
-        print('dam front location files written in ', case_path)
-        print(
-            '***********************************************************************************************************')
-    else:
-        sys.exit("The case cirectory does not exist, check the input file")
+    if data_input.dam_front == 'on':
+        if os.path.exists(case_type):
+            tt = np.round(np.arange(0, 10, 1), 2)
+            # path = directory + '/' + case_type
+            dir = 'dam_front_data'
+            if not os.path.exists(case_type + '/' + dir):
+                os.makedirs(case_type + '/' + dir)
+            l = 0
+            case_path = case_type + '/' + dir
+            case, types = os.path.split(case_type)
+            for i in range(len(T)):
+                if T[i] >= tt[0]:
+                    fname = 'dam_front_sp' + '_' + str(T[i]) + '.dat'
+                    energy_flux_data, total_energy_data, energy_theory = eflux(i)
+                    dam_s = energy_theory
+                    Write_file(fname, dam_s, case_path, 1)
+                    print('The current time is =', T[i])
+                    l = l + 1
+            print('dam front location files written in ', case_path)
+            print(
+                '***********************************************************************************************************')
+        else:
+            sys.exit("The case cirectory does not exist, check the input file")
 
 '''
 if multiple_data == 'on':

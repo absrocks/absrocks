@@ -11,3 +11,4 @@ from .total_energy import te
 from .dissipation_rate import epsilon
 from .eflux_dissipation import flux_dissipation
 from .turbul import turbul
+from .vel_prime import prime

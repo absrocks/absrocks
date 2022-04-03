@@ -53,14 +53,25 @@ print('*************************************************************************
 
 T = np.arange(data_input.t_ini, data_input.t_fin + data_input.dT, data_input.dT)
 # import data_read
+# print("time", T)
 if data_input.transient_data[0] == 'on':
     ts, tf = data_input.transient_data[1], data_input.transient_data[2]
     print('The parameters will be calculated between t=', ts, 'and t=', tf)
     for i in range(len(T)):
-        if ts <= T[i] <= tf:
+        if T[i] == ts or T[i] == tf:
+            # if ts <= T[i] <= tf:
+            print("current time", T[i])
             fin = data_input.filename + str(i) + '.csv'
             print("The source data file name is", fin)
             # timeskipdata = 3.6
+            print("reading 3d data \n")
+            print(" calling the data read module \n")
+            data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
+                                         data_input.data_directory,
+                                         fin, data_input.data_type)
+            points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
+            lev_3d, mask_3d = data_obj.lev_3d()
+
             if data_input.energy_flux == 'on':
                 from tsunami import eflux
 
@@ -68,10 +79,6 @@ if data_input.transient_data[0] == 'on':
                 param = ["Kflux:0", "Kflux:1", "Kflux:2", "Pflux:0", "Pflux:1", "Pflux:2", "Tflux:0", "Tflux:1",
                          "Tflux:2", "x"]
                 fout, case_path = file_out(case_output, data_input, "eflux", T, i, param, data_input.time_write_shift)
-                data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt, data_input.data_directory,
-                                             fin, data_input.data_type)
-                points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
-                lev_3d, mask_3d = data_obj.lev_3d()
                 energy_flux_data = eflux(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d,
                                          mask_3d, points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
 
@@ -89,16 +96,8 @@ if data_input.transient_data[0] == 'on':
                 param = ["dflux_KE", "dflux_PE", "dflux_TE", "x"]
                 fout, case_path = file_out(case_output, data_input, "dis_flux", T, i, param,
                                            data_input.time_write_shift)
-                try:
-                    flux_dis = flux_dissipation(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
-                                                points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
-                except:
-                    print("*** Calling the parameters from the data read module ***")
-                    data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
-                                                 data_input.data_directory, fin, data_input.data_type)
-                    points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
-                    lev_3d, mask_3d = data_obj.lev_3d()
-                    flux_dis = flux_dissipation(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
+
+                flux_dis = flux_dissipation(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
                                                 points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((flux_dis, points_3d[0, :, 0, 0])).T, case_path, 4)
@@ -112,19 +111,10 @@ if data_input.transient_data[0] == 'on':
                 case_output = 'dissipation_rate'
                 param = ["epsilon", "x"]
                 fout, case_path = file_out(case_output, data_input, "epsion", T, i, param, data_input.time_write_shift)
-                try:
-                    eps = epsilon(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
-                                  points_3d[0, :, :, :],
-                                  points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
-                except:
-                    print("*** Calling the parameters from the data read module ***")
-                    data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
-                                                 data_input.data_directory, fin, data_input.data_type)
-                    points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
-                    lev_3d, mask_3d = data_obj.lev_3d()
-                    eps = epsilon(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
-                                  points_3d[0, :, :, :],
-                                  points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)[2]
+
+                eps = epsilon(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
+                              points_3d[0, :, :, :],
+                              points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)[2]
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((eps, points_3d[0, :, 0, 0])).T, case_path, np.shape(eps)[0] + 1)
                 print('The file writing ends at time =', T[i])
@@ -137,18 +127,9 @@ if data_input.transient_data[0] == 'on':
                 case_output = 'total_energy'
                 param = ["pe", "ke", "te", "v_avg", "x"]
                 fout, case_path = file_out(case_output, data_input, "te", T, i, param, data_input.time_write_shift)
-                try:
-                    energy_data = te(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
-                                     points_3d[2, :, :, :], vel_3d)
-                except:
-                    print("*** Calling the parameters from the data read module ***")
-                    data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
-                                                 data_input.data_directory,
-                                                 fin, data_input.data_type)
-                    points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
-                    lev_3d, mask_3d = data_obj.lev_3d()
-                    energy_data = te(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
-                                     points_3d[2, :, :, :], vel_3d)
+
+                energy_data = te(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
+                                 points_3d[2, :, :, :], vel_3d)
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((energy_data[0], energy_data[1], energy_data[2], energy_data[3],
                                             points_3d[0, :, 0, 0])).T, case_path, 5)
@@ -162,26 +143,18 @@ if data_input.transient_data[0] == 'on':
                 case_output = 'turbulent_kinetic'
                 param = ["tke", "x"]
                 fout, case_path = file_out(case_output, data_input, "tke", T, i, param, data_input.time_write_shift)
-                try:
-                    tke = prime(data_input.xpt, data_input.ypt, data_input.zpt, vel_3d, lev_3d, mask_3d)[2]
-                except:
-                    print("*** Calling the parameters from the data read module ***")
-                    data_obj = data_read.data_3d(data_input.xpt, data_input.ypt, data_input.zpt,
-                                                 data_input.data_directory, fin, data_input.data_type)
-                    points_3d, vel_3d = data_obj.point_3d(), data_obj.vel_3d()
-                    lev_3d, mask_3d = data_obj.lev_3d()
-                    tke = prime(data_input.xpt, data_input.ypt, data_input.zpt, vel_3d, lev_3d, mask_3d)[2]
+
+                tke = prime(data_input.xpt, data_input.ypt, data_input.zpt, vel_3d, lev_3d, mask_3d)[2]
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((tke, points_3d[0, :, 0, 0])).T, case_path, 2)
                 print('The file writing ends at time =', T[i])
-                print('Energy dissipation rate data files written in ', case_path)
+                print('Turbulent kinetic energy data files written in ', case_path)
                 print('********************************************************************************')
 else:
     multiple_data = 'off'
     # set time steps
     # dT = 0.25
     # t_ini, t_fin = 0, 10
-
 
     if data_input.vel_field_avg == 'on':
         if os.path.exists(case_type):
@@ -220,7 +193,8 @@ else:
                 x_3d, y_3d, z_3d, lev_3d, c_3d, tke_3d, r_stress, tke_y, r_stress_y, \
                 tke_z, r_stress_z, depth_2d, con_y, con_z = total_energy_data
 
-                gridToVTK(os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft) + '_' + types), x_3d,
+                gridToVTK(os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft) + '_' + types),
+                          x_3d,
                           y_3d,
                           z_3d,
                           pointData={"LEVEL": lev_3d, "CON3d": c_3d, "TKE3d": tke_3d, "RUU_3d": r_stress[0, :, :, :],
@@ -233,7 +207,8 @@ else:
                                      "TKEZ": tke_z, "RUUZ": r_stress_z[0, :, :, :],
                                      "RVVZ": r_stress_z[1, :, :, :], "RWWZ": r_stress_z[2, :, :, :],
                                      "RUVZ": r_stress_z[3, :, :, :], "RUWZ": r_stress_z[4, :, :, :],
-                                     "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y, "CONZ": con_z})
+                                     "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y,
+                                     "CONZ": con_z})
             elif turbulent_average == 'on':
                 print('Turbulent average module is on')
 
@@ -308,21 +283,22 @@ else:
                 x_3d, y_3d, z_3d, lev_3d, c_3d, tke_3d, r_stress, tke_y, r_stress_y, \
                 tke_z, r_stress_z, depth_2d, con_y, con_z, v_mag_3d = total_energy_data
 
-                gridToVTK(os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft_turb) + '_' + types),
-                          x_3d,
-                          y_3d,
-                          z_3d,
-                          pointData={"LEVEL": lev_3d, "CON3d": c_3d, "TKE3d": tke_3d, "RUU_3d": r_stress[0, :, :, :],
-                                     "RVV_3d": r_stress[1, :, :, :], "RWW_3d": r_stress[2, :, :, :],
-                                     "RUV_3d": r_stress[3, :, :, :], "RUW_3d": r_stress[4, :, :, :],
-                                     "RVW_3d": r_stress[5, :, :, :], "TKEY": tke_y,
-                                     "RUUY": r_stress_y[0, :, :, :], "RVVY": r_stress_y[1, :, :, :],
-                                     "RWWY": r_stress_y[2, :, :, :], "RUVY": r_stress_y[3, :, :, :],
-                                     "RUWY": r_stress_y[4, :, :, :], "RVWY": r_stress_y[5, :, :, :],
-                                     "TKEZ": tke_z, "RUUZ": r_stress_z[0, :, :, :],
-                                     "RVVZ": r_stress_z[1, :, :, :], "RWWZ": r_stress_z[2, :, :, :],
-                                     "RUVZ": r_stress_z[3, :, :, :], "RUWZ": r_stress_z[4, :, :, :], "V_mag": v_mag_3d,
-                                     "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y, "CONZ": con_z})
+                gridToVTK(
+                    os.path.join(case_type, dir, 'turbulent_energy' + '_' + 't' + '_' + str(vft_turb) + '_' + types),
+                    x_3d,
+                    y_3d,
+                    z_3d,
+                    pointData={"LEVEL": lev_3d, "CON3d": c_3d, "TKE3d": tke_3d, "RUU_3d": r_stress[0, :, :, :],
+                               "RVV_3d": r_stress[1, :, :, :], "RWW_3d": r_stress[2, :, :, :],
+                               "RUV_3d": r_stress[3, :, :, :], "RUW_3d": r_stress[4, :, :, :],
+                               "RVW_3d": r_stress[5, :, :, :], "TKEY": tke_y,
+                               "RUUY": r_stress_y[0, :, :, :], "RVVY": r_stress_y[1, :, :, :],
+                               "RWWY": r_stress_y[2, :, :, :], "RUVY": r_stress_y[3, :, :, :],
+                               "RUWY": r_stress_y[4, :, :, :], "RVWY": r_stress_y[5, :, :, :],
+                               "TKEZ": tke_z, "RUUZ": r_stress_z[0, :, :, :],
+                               "RVVZ": r_stress_z[1, :, :, :], "RWWZ": r_stress_z[2, :, :, :],
+                               "RUVZ": r_stress_z[3, :, :, :], "RUWZ": r_stress_z[4, :, :, :], "V_mag": v_mag_3d,
+                               "RVWZ": r_stress_z[5, :, :, :], "depth_2d": depth_2d, "CONY": con_y, "CONZ": con_z})
                 # except:
                 # print('File location error!!!!! Check the directory location defined in the input file, flies are not found')
 

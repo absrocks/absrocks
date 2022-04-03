@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import plots_input
+
 font = {'family': 'Arial',
         'weight': 'normal',
         'size': 28}
@@ -14,6 +15,7 @@ T = np.arange(data_input.t_ini, data_input.t_fin + data_input.dT, data_input.dT)
 
 if data_input.flux_plot == 'on':
     from plots import out_file_read, flux_plot
+
     src = data_input.src_dir + '/energy_flux'
     if data_input.case_type == 'rigid':
         data_input.case_dir.extend(data_input.case_rigid)
@@ -72,7 +74,7 @@ if data_input.energy_plot == 'on':
         data_input.case_dir.extend(data_input.case_rigid)
     elif data_input.case_type == 'flex':
         data_input.case_dir.extend(data_input.case_flex)
-    #print(data_input.fname)
+    # print(data_input.fname)
     fout_obj = out_file_read(src, data_input.case_dir, data_input.case_type, data_input.lws, T,
                              data_input.ts, data_input.tf, [data_input.slicex[0]], data_input.ls, data_input.ms,
                              data_input.ds, data_input.case_dir, data_input.file_format, data_input.time_format,
@@ -82,6 +84,25 @@ if data_input.energy_plot == 'on':
     finput, case_path, pe1, ke1, te1, t1 = fout_obj.fread([data_input.slicex[0]], data_input.ts)
     finput, case_path, pe2, ke2, te2, t2 = fout_obj.fread([data_input.slicex[1]], data_input.ts)
     ax1, ax2, ax3 = plot_obj.energy(finput, case_path, pe1, ke1, te1, t1, pe2, ke2, te2, data_input.elegends)
+
+if data_input.turbul_plot == 'on':
+    print('******* turbulence plot is ', data_input.turbul_plot)
+    from plots import param_axial
+
+    src = data_input.src_dir + '/turbulent_kinetic'  # '/total_energy' #'/turbulent_kinetic'
+    if data_input.case_type == 'rigid':
+        data_input.case_dir.extend(data_input.case_rigid)
+    elif data_input.case_type == 'flex':
+        data_input.case_dir.extend(data_input.case_flex)
+    print(data_input.case_flex, data_input.case_type)
+    fout_obj = param_axial(src, data_input.case_flex, data_input.case_type, data_input.lws, T,
+                           data_input.ls, data_input.ms, data_input.ds, data_input.elegends,
+                           data_input.file_format, data_input.time_format,
+                           data_input.skip_line, data_input.fname, plt, data_input.xlocin,
+                           data_input.paramin)
+
+    ax1 = fout_obj.param(7)
+
 plt.show()
 
 '''

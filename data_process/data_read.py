@@ -4,7 +4,7 @@
 import os
 import numpy as np
 import pandas as pd
-#from structured_array import str_array
+# from structured_array import str_array
 import sys
 from data_process.structured_array import str_array
 
@@ -19,15 +19,15 @@ class data_3d:
 
     def point_3d(self):
         # print(data_directory, filename)
-        print('********* Reading coordinates from csv data starts from ', self.dir,' *************\n')
+        print('********* Reading coordinates from csv data starts from ', self.dir, ' *************\n')
         if self.data_type == '3d':
             # out_3d = []
             x = pd.read_csv(os.path.join(self.dir, self.fname), usecols=['Points:0']).values[:, 0]
             y = pd.read_csv(os.path.join(self.dir, self.fname), usecols=['Points:1']).values[:, 0]
             z = pd.read_csv(os.path.join(self.dir, self.fname), usecols=['Points:2']).values[:, 0]
             print('********* Reading coordinates from csv data ends *************\n')
-            if len(x) != self.xpt*self.ypt*self.zpt:
-                print(" the 3d points", len(x), "does not match with points ", self.xpt*self.ypt*self.zpt,
+            if len(x) != self.xpt * self.ypt * self.zpt:
+                print(" the 3d points", len(x), "does not match with points ", self.xpt * self.ypt * self.zpt,
                       "defined in the input file")
                 raise ValueError("The number of elements defined in the input file is wrong please check the "
                                  "configuration")

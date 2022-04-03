@@ -19,10 +19,10 @@ class flux_input:
     # csv_data/3d_data_kim/output'  # shortcut o
 
     data_directory = os.path.join(src_dir, case_dir)
-    t_ini, t_fin = 0, 10.4
+    t_ini, t_fin = 0, 10.2
     dT = 0.2
     time_write_shift = 0
-    transient_data = 'on', 3.6, 10.2  # time interval
+    transient_data = 'on', 3.6, 10  # time interval
     data_type = '3d'
     levsmooth = 'off'
     vel_field_avg = 'off'
@@ -31,7 +31,7 @@ class flux_input:
     # and add direction along which side walls are oriented
     water_depth = 'off'
     total_energy = 'on'
-    turbulent_energy = 'on'
+    turbulent_energy = 'off'
     turbulent_average = 'off'
     shear_data = 'off'
     vel_profile = 'off', 15  # select at which stream-wise location you want to get span-averaged velocity profile
@@ -41,7 +41,7 @@ class flux_input:
     int_avg = 'field'  # field, int
     nelx, nely, nelz = 600, 160, 92  # 400, 106, 61  # 1000, 160, 92, # 600
     # Kim data : nelx, nely, nelz = 1140, 92, 90
-    # Dam break pent flexible :
+    # Dam break pent flexible : 1000/600, 160, 92
     # water_vol = 6 * 3.5 * 4  # L * D * W, dry case
     probe_data = 'off'
     force = 'off'

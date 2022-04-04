@@ -58,8 +58,7 @@ if data_input.transient_data[0] == 'on':
     ts, tf = data_input.transient_data[1], data_input.transient_data[2]
     print('The parameters will be calculated between t=', ts, 'and t=', tf)
     for i in range(len(T)):
-        if T[i] == ts or T[i] == tf:
-            # if ts <= T[i] <= tf:
+        if ts <= T[i] <= tf:
             print("current time", T[i])
             fin = data_input.filename + str(i) + '.csv'
             print("The source data file name is", fin)

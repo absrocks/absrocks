@@ -11,7 +11,7 @@ class flux_input:
     # Source directory where data is present
     src_dir = '/Volumes/10.0.0.104/seagate/tsunami/arnason_et_al/multi-cyl/pent-case/3d_data/flex'
     # Kim data source dir = '/media/abhishek/WD-phd/transcend/PHD_2019/tsunami/dam_break_wet_case/les_swash/csv_data'
-    case_dir = 'flex-single-1e4'
+    case_dir = 'flex-single-1e5'
     # Kim data case dir = '3d_data_kim'  # flex-y1e6, rigid-rect
     # destination directory
     dest_dir = '/Volumes/10.0.0.104/seagate/tsunami/arnason_et_al/multi-cyl/pent-case/output'
@@ -31,7 +31,7 @@ class flux_input:
     # and add direction along which side walls are oriented
     water_depth = 'off'
     total_energy = 'on'
-    turbulent_energy = 'off'
+    turbulent_energy = 'on'
     turbulent_average = 'off'
     shear_data = 'off'
     vel_profile = 'off', 15  # select at which stream-wise location you want to get span-averaged velocity profile

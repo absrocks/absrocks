@@ -94,7 +94,7 @@ class flux_plot:
                 # print(kf1[icase, :][tf1[icase, :] >= tol])
                 finput.ax1.plot(t[1:len(t)], rkf, finput.ms[icase], color=finput.cke[icase],
                                 label=legends[icase], lw=finput.lws,
-                                linestyle=finput.ls[icase], dashes=finput.ds[icase])
+                                dashes=finput.ds[icase])  # linestyle=finput.ls[icase]
                 finput.ax1.plot(t[1:len(t)], pkf,
                                 finput.ms[icase], color=finput.cpe[icase], lw=finput.lws,
                                 linestyle=finput.ls[icase], dashes=finput.ds[icase])
@@ -108,7 +108,7 @@ class flux_plot:
             finput.ax1.text(0.5, 0.9, r'$\phi^{k}_{r}$', horizontalalignment='center',
                             verticalalignment='center', transform=finput.ax1.transAxes)
             finput.ax1.text(0.5, 0.3, r'$\phi^{p}_{r}$', horizontalalignment='center',
-                           verticalalignment='center', transform=finput.ax1.transAxes)
+                            verticalalignment='center', transform=finput.ax1.transAxes)
 
             # PE
             finput.ax2.set_xlim(4, 10.5)

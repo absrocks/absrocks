@@ -29,7 +29,7 @@ class plots_input:
     dT = 0.2
     file_format = 'tsv'
     ts, tf = 4, 10
-    ls = ['solid', 'dotted', 'dashed', 'dashdot', '', 'dotted', 'dashed']
+    ls = ['solid', 'solid', 'solid', 'solid']  # 'dotted', 'dashed', 'dashdot', '', 'dotted', 'dashed']
     ms = ['x', '^', '*', 's', 'd', 'o', '+', '_']
     ds = [(1, 1), (1, 1), (5, 5), (3, 5, 1, 5, 1, 5), (8, 4, 2, 4, 2, 4), (1, 10), (5, 10)]
 
@@ -37,8 +37,8 @@ class plots_input:
     if flux_plot == 'on':
         fname = 'eflux'
         kfin, pfin, tfin = 1, 4, 7
-        colorke = ['null', '#fd8d3c','#e6550d','#a63603']  # ['null', '#d94701', '#238b45', '#2171b5']
-        colorpe = ['null', '#fd8d3c','#e6550d','#a63603']  # ['null', '#fd8d3c', '#74c476', '#6baed6']
+        colorke = ['null', '#fd8d3c', '#e6550d', '#a63603']  # ['null', '#d94701', '#238b45', '#2171b5']
+        colorpe = ['null', '#fd8d3c', '#e6550d', '#a63603']  # ['null', '#fd8d3c', '#74c476', '#6baed6']
         ftype = ['flux', 'cum', 'reflection', 'dissipation']
         elegends = ['nocyl', r'$E = 5 \times 10^{5} pa$', r'$E = 1 \times 10^{6} pa$', r'$E = 5 \times 10^{6} pa$',
                     r'SP2D/four-cyl', r'$E = 5 \times 10^{4} pa$', r'$E = 5 \times 10^{4} pa$',

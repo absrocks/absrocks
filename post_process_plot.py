@@ -26,7 +26,7 @@ if data_input.flux_plot == 'on':
                              data_input.ts, data_input.tf, data_input.xloc, data_input.ls, data_input.ms,
                              data_input.ds, data_input.case_dir, data_input.file_format, data_input.time_format,
                              data_input.skip_line, data_input.pfin, data_input.kfin, data_input.tfin,
-                             data_input.xlocin, data_input.fname, plt)
+                             data_input.xlocin, data_input.fname, plt, data_input.colorke, data_input.colorpe)
     plot_obj = flux_plot()
     if data_input.flux_plot_type == 'flux':
         finput, case_path, pf, kf, tf, t = fout_obj.fread(data_input.xloc)

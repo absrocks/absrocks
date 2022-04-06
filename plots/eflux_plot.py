@@ -92,11 +92,11 @@ class flux_plot:
             # print(rkf, '\n', pf_cum[icase, :], t, len(pf_cum[icase, :]))
             if icase >= 1:
                 # print(kf1[icase, :][tf1[icase, :] >= tol])
-                finput.ax1.plot(t[1:len(t)], rkf,
-                                finput.ms[icase], label=legends[icase], lw=finput.lws,
+                finput.ax1.plot(t[1:len(t)], rkf, finput.ms[icase], color=finput.cke[icase],
+                                label=legends[icase], lw=finput.lws,
                                 linestyle=finput.ls[icase], dashes=finput.ds[icase])
-                finput.ax2.plot(t[1:len(t)], pkf,
-                                finput.ms[icase], label=legends[icase], lw=finput.lws,
+                finput.ax1.plot(t[1:len(t)], pkf,
+                                finput.ms[icase], color=finput.cpe[icase], lw=finput.lws,
                                 linestyle=finput.ls[icase], dashes=finput.ds[icase])
                 finput.ax3.plot(t[1:len(t)], rkf + pkf,
                                 finput.ms[icase], label=legends[icase], lw=finput.lws,
@@ -105,6 +105,10 @@ class flux_plot:
             finput.ax1.set_xlim(4, 10.5)
             finput.ax1.set_ylim(0, 0.2)
             finput.ax1.set_yticks(np.arange(0, 0.36, 0.05))
+            finput.ax1.text(0.5, 0.9, r'$\phi^{k}_{r}$', horizontalalignment='center',
+                            verticalalignment='center', transform=finput.ax1.transAxes)
+            finput.ax1.text(0.5, 0.3, r'$\phi^{p}_{r}$', horizontalalignment='center',
+                           verticalalignment='center', transform=finput.ax1.transAxes)
 
             # PE
             finput.ax2.set_xlim(4, 10.5)
@@ -123,7 +127,7 @@ class flux_plot:
             finput.ax1.set_xlabel(r'Time [s]')
             finput.ax2.set_xlabel(r'Time [s]')
             finput.ax3.set_xlabel(r'Time [s]')
-            finput.ax1.set_ylabel(r'$\phi^{k}_{r}$')
+            finput.ax1.set_ylabel('Reflected flux coefficient')  # (r'$\phi^{k}_{r}$')
             finput.ax2.set_ylabel(r'$\phi^{p}_{r}$')
             finput.ax3.set_ylabel(r'$\phi^{t}_{r}$')
 

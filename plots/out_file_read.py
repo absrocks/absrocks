@@ -5,7 +5,7 @@ import numpy as np
 class out_file_read:
 
     def __init__(self, src, case, case_type, lws, time, ts, tf, xloc, ls, ms, ds, legend, format, time_format,
-                 skip_line, pfin, kfin, tfin, xlocin, fname, plt):
+                 skip_line, pfin, kfin, tfin, xlocin, fname, plt, colorke, colorpe):
         self.src, self.case = src, case
         self.lws, self.T, self.skip = lws, time, skip_line
         self.locx, self.fi, self.fname = xloc, format, fname
@@ -13,6 +13,7 @@ class out_file_read:
         self.type, self.legend = case_type, legend
         self.ts, self.tf, self.tformat = ts, tf, time_format
         self.pfin, self.kfin, self.tfin, self.xin = pfin, kfin, tfin, xlocin
+        self.cke, self.cpe = colorke, colorpe
 
         self.fig1, self.ax1 = plt.subplots(figsize=(11, 7), dpi=90)
         plt.subplots_adjust(left=0.15, bottom=0.15, right=0.95, top=0.95)

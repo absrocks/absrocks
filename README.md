@@ -1,4 +1,7 @@
 # tsunami-postprocess-V2
 # Config files for my GitHub profile.
-This package will extract the velocity, density, and other parameters to cancluate the energy flux, energy dissipation rate etc. 
+This package will extract the velocity, density, and other parameters to calculate the energy flux, energy dissipation rate etc. 
 The parameters can be changed from input file. 
+To run the postprocess script type 
+```python tsunami_postprocess.py```
+Check the input parameters defined in `input.py`

@@ -37,7 +37,7 @@ class out_file_read:
             else:
                 case_path.append(self.src + '/' + self.case[icase])  # '/' + self.type +
 
-            t = self.T[(self.T >= self.ts) & (self.T <= self.tf)]
+            t = self.T[(self.T >= ts) & (self.T <= self.tf)]
             if icase == 0:
                 pf, tf, kf = np.zeros((len(self.case), len(t))), np.zeros((len(self.case), len(t))), \
                              np.zeros((len(self.case), len(t)))

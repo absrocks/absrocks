@@ -94,10 +94,10 @@ class flux_plot:
                 # print(kf1[icase, :][tf1[icase, :] >= tol])
                 finput.ax1.plot(t[1:len(t)], rkf, finput.ms[icase], color=finput.cke[icase],
                                 label=legends[icase], lw=finput.lws,
-                                dashes=finput.ds[icase])  # linestyle=finput.ls[icase]
+                                linestyle=finput.ls[icase])  #  dashes=finput.ds[icase]
                 finput.ax1.plot(t[1:len(t)], pkf,
                                 finput.ms[icase], color=finput.cpe[icase], lw=finput.lws,
-                                linestyle=finput.ls[icase], dashes=finput.ds[icase])
+                                linestyle=finput.ls[icase])  # , dashes=finput.ds[icase]
                 finput.ax3.plot(t[1:len(t)], rkf + pkf,
                                 finput.ms[icase], label=legends[icase], lw=finput.lws,
                                 linestyle=finput.ls[icase], dashes=finput.ds[icase])
@@ -127,7 +127,7 @@ class flux_plot:
             finput.ax1.set_xlabel(r'Time [s]')
             finput.ax2.set_xlabel(r'Time [s]')
             finput.ax3.set_xlabel(r'Time [s]')
-            finput.ax1.set_ylabel('Reflected flux coefficient')  # (r'$\phi^{k}_{r}$')
+            finput.ax1.set_ylabel('Reflected energy flux coefficient')  # (r'$\phi^{k}_{r}$')
             finput.ax2.set_ylabel(r'$\phi^{p}_{r}$')
             finput.ax3.set_ylabel(r'$\phi^{t}_{r}$')
 
@@ -137,6 +137,7 @@ class flux_plot:
         pf_cum1 = np.zeros((len(case_path), len(t2) - 1))
         kf_cum1, tf_cum1, pf_cum2, kf_cum2, tf_cum2 = 0 * pf_cum1, 0 * pf_cum1, 0 * pf_cum1, 0 * pf_cum1, 0 * pf_cum1
         t1 = t1[0:len(t2)]
+
         for icase in range(len(case_path)):
             print('The path is in', case_path[icase])
 
@@ -149,45 +150,54 @@ class flux_plot:
             tf_cum2[icase, :] = integrate.cumtrapz(tf2[icase, :], t2)
 
             if icase > 0:
+                '''
                 finput.ax1.plot(t2[1:len(t2)], abs(pf_cum1[icase, :] - pf_cum2[icase, :]) / tf_cum1[0, :])
                 finput.ax2.plot(t2[1:len(t2)], abs(pf_cum1[icase, :] - pf_cum2[icase, :]) / tf_cum1[0, :])
                 finput.ax3.plot(t2[1:len(t2)], abs(pf_cum1[icase, :] - pf_cum2[icase, :]) / tf_cum1[0, :])
                 '''
-                #print(icase)
-                print(pf_cum1[icase, :], '\n', len(pf_cum1[icase, :]), len(t2))
-                finput.ax1.plot(t2[1:len(t2)], abs(pf_cum1[icase, :] - pf_cum2[icase, :]) / tf_cum1[0, :], finput.ms[icase],
-                         label=legends[icase], lw=finput.lws,
-                         linestyle=finput.ls[icase], dashes=finput.ds[icase])
-                finput.ax2.plot(t2[1:len(t2)], abs(kf_cum1[icase, :] - kf_cum2[icase, :]) / tf_cum1[0, :], finput.ms[icase],
-                         label=legends[icase], lw=finput.lws,
-                         linestyle=finput.ls[icase], dashes=finput.ds[icase])
+                # print(icase)
+                # print(pf_cum1[icase, :], '\n', len(pf_cum1[icase, :]), len(t2))
+                finput.ax2.plot(t2[1:len(t2)], 0.75*abs(pf_cum1[icase, :] - pf_cum2[icase, :]) / tf_cum1[0, :],
+                                finput.ms[icase], color=finput.cpe[icase],
+                                lw=finput.lws,
+                                linestyle=finput.ls[icase])
+                finput.ax2.plot(t2[1:len(t2)], abs(kf_cum1[icase, :] - kf_cum2[icase, :]) / tf_cum1[0, :],
+                                finput.ms[icase], color=finput.cke[icase],
+                                label=legends[icase], lw=finput.lws,
+                                linestyle=finput.ls[icase])
 
-                ax3.plot(t2[1:len(t2)],
-                         (abs(pf_cum2[icase, :] - pf_cum1[icase, :]) + abs(kf_cum1[icase, :] - kf_cum2[icase, :])) /
-                         tf_cum1[0, :], label=legends[icase], lw=finput.lws,
-                         linestyle=finput.ls[icase], dashes=finput.ds[icase])
-        
+                finput.ax3.plot(t2[1:len(t2)],
+                                (abs(pf_cum2[icase, :] - pf_cum1[icase, :]) + abs(
+                                    kf_cum1[icase, :] - kf_cum2[icase, :])) /
+                                tf_cum1[0, :], label=legends[icase], lw=finput.lws,
+                                linestyle=finput.ls[icase], dashes=finput.ds[icase])
+
         finput.ax1.set_xlim(4, 10.5)
         finput.ax1.set_ylim(0, 0.25)
-        ax1.set_yticks(np.arange(0, 0.251, 0.05))
+        finput.ax1.set_yticks(np.arange(0, 0.251, 0.05))
 
-        ax2.set_xlim(4, 10.5)
-        ax2.set_ylim(0, 0.21)
-        ax2.set_yticks(np.arange(0, 0.251, 0.05))
+        finput.ax2.set_xlim(4, 10.5)
+        finput.ax2.set_ylim(0, 0.351)
+        finput.ax2.set_yticks(np.arange(0, 0.351, 0.05))
 
-        ax3.set_xlim(4, 10.5)
-        ax3.set_yticks(np.arange(0, 0.351, 0.05))
-        ax1.legend(loc='best', fontsize='24', frameon=False)
-        ax2.legend(loc='best', fontsize='24', frameon=False)
-        ax3.legend(loc='best', fontsize='24', frameon=False)
+        finput.ax3.set_xlim(4, 10.5)
+        finput.ax3.set_yticks(np.arange(0, 0.351, 0.05))
+        finput.ax1.legend(loc='upper left', fontsize='24', frameon=False)
+        finput.ax2.legend(loc='upper left', fontsize='24', frameon=False)
+        finput.ax3.legend(loc='best', fontsize='24', frameon=False)
 
-        ax1.set_xlabel(r'Time [s]')
-        ax2.set_xlabel(r'Time [s]')
-        ax3.set_xlabel(r'Time [s]')
-        ax2.set_ylabel(r'$\phi^{k}_{d}$')
-        ax1.set_ylabel(r'$\phi^{p}_{d}$')
-        ax3.set_ylabel(r'$\phi^{t}_{d}$')
-        #print(fig1)
-        #plt.show()
-        '''
-        return ax1, ax2, ax3
+        finput.ax2.text(0.6, 0.95, r'$\phi^{k}_{d}$', horizontalalignment='center',
+                        verticalalignment='center', transform=finput.ax1.transAxes)
+        finput.ax2.text(0.5, 0.6, r'$\phi^{p}_{d}$', horizontalalignment='center',
+                        verticalalignment='center', transform=finput.ax1.transAxes)
+
+        finput.ax1.set_xlabel(r'Time [s]')
+        finput.ax2.set_xlabel(r'Time [s]')
+        finput.ax3.set_xlabel(r'Time [s]')
+        finput.ax2.set_ylabel('Dissipated energy flux coefficient')
+        finput.ax1.set_ylabel(r'$\phi^{p}_{d}$')
+        finput.ax3.set_ylabel(r'$\phi^{t}_{d}$')
+        # print(fig1)
+        # plt.show()
+
+        return finput.ax1, finput.ax2, finput.ax3

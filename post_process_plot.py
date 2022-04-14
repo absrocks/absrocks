@@ -45,7 +45,9 @@ if data_input.flux_plot == 'on':
     elif data_input.flux_plot_type == 'dissipation':
         print('********** flux plot type is selected as', data_input.flux_plot_type)
         finput, case_path, pf1, kf1, tf1, t1 = fout_obj.fread(data_input.xloc, data_input.ts)
-        finput, case_path, pf2, kf2, tf2, t2 = fout_obj.fread([12], 4.6)
+        print("t1", t1, '\n')
+        finput, case_path, pf2, kf2, tf2, t2 = fout_obj.fread([12], 5.2)
+        print("t2", t2)
         ax4, ax5, ax6 = plot_obj.dissipation(finput, case_path, pf1, kf1, tf1, t1, pf2, kf2, tf2, t2,
                                              data_input.elegends)
 

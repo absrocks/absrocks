@@ -84,7 +84,7 @@ if data_input.transient_data[0] == 'on':
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((energy_flux_data, points_3d[0, :, 0, 0])).T, case_path,
                            np.shape(energy_flux_data)[0] + 1)
-                print('The file writing ends at time =', T[i])
+                print('The file writing ends at time =', T[i] + data_input.time_write_shift)
                 print('energy flux data files written in ', case_path)
             print('********************************************************************************')
 
@@ -97,10 +97,10 @@ if data_input.transient_data[0] == 'on':
                                            data_input.time_write_shift)
 
                 flux_dis = flux_dissipation(data_input.xpt, data_input.ypt, data_input.zpt, lev_3d, mask_3d,
-                                                points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
+                                            points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((flux_dis, points_3d[0, :, 0, 0])).T, case_path, 4)
-                print('The file writing ends at time =', T[i])
+                print('The file writing ends at time =', T[i] + data_input.time_write_shift)
                 print('Energy Flux dissipation data files written in ', case_path)
                 print('********************************************************************************')
 
@@ -116,7 +116,7 @@ if data_input.transient_data[0] == 'on':
                               points_3d[1, :, :, :], points_3d[2, :, :, :], vel_3d)[2]
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((eps, points_3d[0, :, 0, 0])).T, case_path, np.shape(eps)[0] + 1)
-                print('The file writing ends at time =', T[i])
+                print('The file writing ends at time =', T[i] + data_input.time_write_shift)
                 print('Energy dissipation rate data files written in ', case_path)
                 print('********************************************************************************')
 
@@ -132,7 +132,8 @@ if data_input.transient_data[0] == 'on':
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((energy_data[0], energy_data[1], energy_data[2], energy_data[3],
                                             points_3d[0, :, 0, 0])).T, case_path, 5)
-                print('The file writing ends at time =', T[i])
+                print(points_3d[0, :, 0, 0][points_3d[0, :, 0, 0] == 13], energy_data[3][points_3d[0, :, 0, 0] == 13])
+                print('The file writing ends at time =', T[i] + data_input.time_write_shift)
                 print('Total energy data files written in ', case_path)
                 print('********************************************************************************')
 
@@ -146,7 +147,7 @@ if data_input.transient_data[0] == 'on':
                 tke = prime(data_input.xpt, data_input.ypt, data_input.zpt, vel_3d, lev_3d, mask_3d)[2]
                 # File parameters: potential flux, kinetic, flux, total flux, x-coordinates
                 Write_file(fout, np.vstack((tke, points_3d[0, :, 0, 0])).T, case_path, 2)
-                print('The file writing ends at time =', T[i])
+                print('The file writing ends at time =', T[i] + data_input.time_write_shift)
                 print('Turbulent kinetic energy data files written in ', case_path)
                 print('********************************************************************************')
 else:

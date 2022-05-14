@@ -94,13 +94,14 @@ class flux_plot:
                 # print(kf1[icase, :][tf1[icase, :] >= tol])
                 finput.ax1.plot(t[1:len(t)], rkf, finput.ms[icase], color=finput.cke[icase],
                                 label=legends[icase], lw=finput.lws,
-                                linestyle=finput.ls[icase])  #  dashes=finput.ds[icase]
+                                linestyle=finput.ls[icase])  # dashes=finput.ds[icase]
                 finput.ax1.plot(t[1:len(t)], pkf,
                                 finput.ms[icase], color=finput.cpe[icase], lw=finput.lws,
                                 linestyle=finput.ls[icase])  # , dashes=finput.ds[icase]
                 finput.ax3.plot(t[1:len(t)], rkf + pkf,
                                 finput.ms[icase], label=legends[icase], lw=finput.lws,
                                 linestyle=finput.ls[icase], dashes=finput.ds[icase])
+                print(max(rkf[t[1:len(t)] <= 12]))
             # KE
             finput.ax1.set_xlim(4, 10.5)
             finput.ax1.set_ylim(0, 0.2)
@@ -157,7 +158,7 @@ class flux_plot:
                 '''
                 # print(icase)
                 # print(pf_cum1[icase, :], '\n', len(pf_cum1[icase, :]), len(t2))
-                finput.ax2.plot(t2[1:len(t2)], 0.75*abs(pf_cum1[icase, :] - pf_cum2[icase, :]) / tf_cum1[0, :],
+                finput.ax2.plot(t2[1:len(t2)], 0.75 * abs(pf_cum1[icase, :] - pf_cum2[icase, :]) / tf_cum1[0, :],
                                 finput.ms[icase], color=finput.cpe[icase],
                                 lw=finput.lws,
                                 linestyle=finput.ls[icase])
@@ -165,6 +166,7 @@ class flux_plot:
                                 finput.ms[icase], color=finput.cke[icase],
                                 label=legends[icase], lw=finput.lws,
                                 linestyle=finput.ls[icase])
+                print(max(abs(kf_cum1[icase, :] - kf_cum2[icase, :]) / tf_cum1[0, :]))
 
                 finput.ax3.plot(t2[1:len(t2)],
                                 (abs(pf_cum2[icase, :] - pf_cum1[icase, :]) + abs(
@@ -182,13 +184,13 @@ class flux_plot:
 
         finput.ax3.set_xlim(4, 10.5)
         finput.ax3.set_yticks(np.arange(0, 0.351, 0.05))
-        finput.ax1.legend(loc='upper left', fontsize='24', frameon=False)
-        finput.ax2.legend(loc='upper left', fontsize='24', frameon=False)
+        finput.ax1.legend(loc='center left', fontsize='24', frameon=False)
+        finput.ax2.legend(loc='center left', fontsize='24', frameon=False)
         finput.ax3.legend(loc='best', fontsize='24', frameon=False)
 
         finput.ax2.text(0.6, 0.95, r'$\phi^{k}_{d}$', horizontalalignment='center',
                         verticalalignment='center', transform=finput.ax1.transAxes)
-        finput.ax2.text(0.5, 0.6, r'$\phi^{p}_{d}$', horizontalalignment='center',
+        finput.ax2.text(0.5, 0.4, r'$\phi^{p}_{d}$', horizontalalignment='center',
                         verticalalignment='center', transform=finput.ax1.transAxes)
 
         finput.ax1.set_xlabel(r'Time [s]')

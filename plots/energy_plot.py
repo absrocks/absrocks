@@ -76,3 +76,28 @@ class energy_plot:
         ax3.set_ylabel(r'$\phi^{t}_{re}$')
         '''
         return ax1, pf, kf  # , ax2, ax3
+
+    def eta(self, finput, case_path, pe, t, legends):
+        # pet1 = np.zeros(len(case_path))
+        # ket1, tet1, pet2, ket2, tet2 = 0 * pet1, 0 * pet1, 0 * pet1, 0 * pet1, 0 * pet1
+        for icase in range(len(case_path)):
+            if icase >= 1:
+                print('The path is in', case_path[icase])
+                finput.ax1.plot(t, pe[icase, :]*1000, finput.ms[icase], color=finput.cke[icase],
+                                label=legends[icase], lw=finput.lws,
+                                linestyle=finput.ls[icase])  # dashes=finput.ds[icase]
+
+                print(pe[icase, :])  # KE
+                finput.ax1.set_xlim(4, 10.5)
+                finput.ax1.legend(loc='best', fontsize='24', frameon=False)
+                finput.ax1.set_ylim(50, 126)
+                finput.ax1.set_yticks(np.arange(50, 126, 25))
+                # finput.ax1.text(0.5, 0.9, r'$\phi^{k}_{r}$', horizontalalignment='center',
+                #                verticalalignment='center', transform=finput.ax1.transAxes)
+                # finput.ax1.text(0.5, 0.3, r'$\phi^{p}_{r}$', horizontalalignment='center',
+                #                verticalalignment='center', transform=finput.ax1.transAxes)
+
+                finput.ax1.set_xlabel(r'Time [s]')
+                finput.ax1.set_ylabel(r'$\eta \, [mm]$')
+
+        return finput.ax1

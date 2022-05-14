@@ -55,7 +55,10 @@ class out_file_read:
                         line = lines[j]
                         line = line.strip()
                         line = line.split()
-                        x[j - self.skip] = float(line[self.xin])
+                        if type(self.xin) is int:
+                            x[j - self.skip] = float(line[self.xin])
+                        else:
+                            x[j - self.skip] = float(line[self.xin[icase]])
                         if len(locx) == 1:
                             xx = locx[0]
                         else:

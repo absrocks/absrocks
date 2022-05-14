@@ -10,7 +10,7 @@ plt.rc('font', **font)
 
 data_input = plots_input.plots_input()
 
-T = np.arange(data_input.t_ini, data_input.t_fin + data_input.dT, data_input.dT)
+T = np.round(np.arange(data_input.t_ini, data_input.t_fin + data_input.dT, data_input.dT), 3)
 # Input Settings starts
 
 if data_input.flux_plot == 'on':
@@ -66,6 +66,20 @@ if data_input.paraview_data == 'on':
     finput, case_path, pf, kf, tf, t = pv_obj.pvfileread()
     plot_obj = flux_plot()
     ax1, ax2, ax3 = plot_obj.reflection(finput, case_path, pf, kf, tf, t, data_input.elegends)
+if data_input.pv_eta == 'on':
+
+    print('paraview eta plot is', data_input.pv_eta)
+    from plots import pv_1d
+    src = data_input.src_dir + '1d_data/eta' + '/' + 'x' + str(data_input.xloc)
+    if data_input.case_type == 'rigid':
+        data_input.case_dir.extend(data_input.case_rigid)
+    elif data_input.case_type == 'flex':
+        data_input.case_dir = data_input.case_flex
+    print(data_input.case_dir)
+    pv_obj = pv_1d.pv_plot(src, data_input.case_dir, data_input.case_type, data_input.lws, data_input.xloc,
+                           data_input.ls, data_input.ms, data_input.ds, data_input.elegends, data_input.file_format,
+                                       data_input.time_format, plt, data_input.colorke, data_input.colorpe)
+    ax1 = pv_obj.pveta()
 
 if data_input.energy_plot == 'on':
     print('******* energy plot is ', data_input.energy_plot)
@@ -90,7 +104,6 @@ if data_input.energy_plot == 'on':
 if data_input.turbul_plot == 'on':
     print('******* turbulence plot is ', data_input.turbul_plot)
     from plots import param_axial
-
     src = data_input.src_dir + '/turbulent_kinetic'  # '/total_energy' #'/turbulent_kinetic'
     if data_input.case_type == 'rigid':
         data_input.case_dir.extend(data_input.case_rigid)
@@ -101,10 +114,50 @@ if data_input.turbul_plot == 'on':
                            data_input.ls, data_input.ms, data_input.ds, data_input.elegends,
                            data_input.file_format, data_input.time_format,
                            data_input.skip_line, data_input.fname, plt, data_input.xlocin,
-                           data_input.paramin)
+                           data_input.paramin, data_input.cl, data_input.t_avg)
+    if data_input.transient == 'on':
+        print("Transient data is on")
+        ax1 = fout_obj.param_t(data_input.xc, data_input.ts, data_input.tf)
+    else:
+        print("streamwise data is on")
+        ax1 = fout_obj.param(data_input.k_t, data_input.cyl_d)
+if data_input.v_avg_plot == 'on':
+    print('******* velocity average plot is ', data_input.v_avg_plot)
+    from plots import param_axial
 
-    ax1 = fout_obj.param(7)
+    src = data_input.src_dir + '/total_energy'  # '/total_energy' #'/turbulent_kinetic'
+    if data_input.case_type == 'rigid':
+        data_input.case_dir.extend(data_input.case_rigid)
+    elif data_input.case_type == 'flex':
+        data_input.case_dir.extend(data_input.case_flex)
+    print(data_input.case_flex, data_input.case_type)
+    fout_obj = param_axial(src, data_input.case_flex, data_input.case_type, data_input.lws, T,
+                           data_input.ls, data_input.ms, data_input.ds, data_input.elegends,
+                           data_input.file_format, data_input.time_format,
+                           data_input.skip_line, data_input.fname, plt, data_input.xlocin,
+                           data_input.paramin, data_input.cl, data_input.t_avg)
 
+    ax1 = fout_obj.param(data_input.v_t, data_input.cyl_d)
+
+if data_input.eta_plot == 'on':
+    print('******* eta plot is ', data_input.eta_plot)
+    from plots import out_file_read, energy_plot
+
+    src = data_input.src_dir + '/total_energy'
+    if data_input.case_type == 'rigid':
+        data_input.case_dir.extend(data_input.case_rigid)
+    elif data_input.case_type == 'flex':
+        data_input.case_dir.extend(data_input.case_flex)
+    # print(data_input.fname)
+    fout_obj = out_file_read(src, data_input.case_dir, data_input.case_type, data_input.lws, T,
+                             data_input.ts, data_input.tf, data_input.xloc, data_input.ls, data_input.ms,
+                             data_input.ds, data_input.case_dir, data_input.file_format, data_input.time_format,
+                             data_input.skip_line, data_input.pfin, data_input.kfin, data_input.tfin,
+                             data_input.xlocin, data_input.fname, plt, data_input.colorke, data_input.colorpe)
+    plot_obj = energy_plot()
+    finput, case_path, pe, ke, te, t = fout_obj.fread(data_input.xloc, data_input.ts)
+    ax1 = plot_obj.eta(finput, case_path, pe, t, data_input.elegends)
+    #finput, case_path, pe1, ke1, te1, t1, pe2, ke2, te2, data_input.elegends)
 plt.show()
 
 '''

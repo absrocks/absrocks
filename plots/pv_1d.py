@@ -47,19 +47,19 @@ class pv_plot:
             case_split = self.case[icase].split('/')
             case_path.append(self.src + '/' + case_split[0] + '/' + case_split[1])
             frep = case_split[1] + '-' + case_split[2]
-            print(self.case[icase], frep)
+            print(self.src,  self.case[icase], frep)
             fname = frep + '.csv'
             t = pd.read_csv(os.path.join(case_path[icase], fname), usecols=['Time']).values[:, 0]
             eta_max = pd.read_csv(os.path.join(case_path[icase], fname), usecols=['max Z ( block=1)']).values[:, 0]
             eta_avg = pd.read_csv(os.path.join(case_path[icase], fname), usecols=['avg Z ( block=1)']).values[:, 0]
-            self.ax1.plot(t+3.6, eta_max * 1000, self.ms[icase], color=self.cke[icase+1],
+            self.ax1.plot(t+3.6, eta_avg * 1000, self.ms[icase], color=self.cke[icase+1],
                           label=self.legend[icase], lw=self.lws,
                           linestyle=self.ls[icase])
 
-            self.ax1.set_xlim(4, 10.5)
+            self.ax1.set_xlim(5, 10.5)
             self.ax1.legend(loc='best', fontsize='24', frameon=False)
-            self.ax1.set_ylim(50, 151)
-            self.ax1.set_yticks(np.arange(50, 151, 25))
+            self.ax1.set_ylim(80, 121)
+            self.ax1.set_yticks(np.arange(80, 121, 10))
 
             self.ax1.set_xlabel(r'Time [s]')
             self.ax1.set_ylabel(r'$\eta \, [mm]$')

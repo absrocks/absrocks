@@ -18,23 +18,23 @@ class plots_input:
     case_rigid = ['rigid/onecyl', 'rigid/SP1.5D/double-cyl', 'rigid/SP1.5D/four-cyl', 'rigid/SP2D/double-cyl',
                   'rigid/SP2D/four-cyl']
     # case_rigid = ['single-cyl-rigid', 'double-cyl-sp1.5d', 'four-cyl-sp1.5d', 'double-cyl-sp2d', 'four-cyl-sp2d']
-    # case_flex = ['flex/SP2D/flex-four-5e6', 'flex/SP2D/flex-four-1e6', 'flex/SP2D/flex-four-5e5']  # Four cyl
+    case_flex = ['flex/SP2D/flex-four-5e6', 'flex/SP2D/flex-four-1e6', 'flex/SP2D/flex-four-5e5']  # Four cyl
     # case_flex = ['flex/flex-single-1e5', 'flex/flex-single-5e4', 'flex/flex-single-1e4']  # Single cylinder
-    case_flex = ['rigid/SP2D/double-cyl', 'flex/SP2D/flex-double-1e5', 'flex/SP2D/flex-double-5e4']  # Double cylinder
+    # case_flex = ['rigid/double-cyl', 'flex/SP1.5D/flex-double-1e5', 'flex/SP1.5D/flex-double-5e4']  # Double cylinder
     case_type = 'flex'
     time_format = "{0:.2f}"
     t_ini, t_fin = 0, 10
     skip_line = 2
     dT = 0.2
     file_format = 'tsv'
-    ts, tf = 4.2, 10
+    ts, tf = 5.6, 10
     ls = ['solid', 'solid', 'dotted', 'dashed']  # 'dotted', 'dashed', 'dashdot', '', 'dotted', 'dashed']
     ms = ['x', '^', '*', 'o', 'd', 'o', '+', '_']
     ds = [(1, 1), (1, 1), (5, 5), (3, 5, 1, 5, 1, 5), (8, 4, 2, 4, 2, 4), (1, 10), (5, 10)]
     lws = 2.5
     colorke = ['null', '#fd8d3c', '#e6550d', '#a63603']
     colorpe = ['null', '#fd8d3c', '#e6550d', '#a63603']
-    flux_plot = 'on'  # , 'flux'  # type energy flux
+    flux_plot = 'off'  # , 'flux'  # type energy flux
     if flux_plot == 'on':
         fname = 'eflux'
         kfin, pfin, tfin = 1, 4, 7
@@ -71,19 +71,19 @@ class plots_input:
         fname = 'te'
         kfin, pfin, tfin = 2, 1, 3
         xloc, xlocin = [11], [4, 5, 5, 5, 5]
-        elegends = ['nocyl', r'$E = 5 \times 10^{6} pa$', r'$E = 1 \times 10^{6} pa$',
-                    r'$E = 5 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$',
-                    r'$E = 5 \times 10^{4} pa$']
+        elegends = ['nocyl', r'$E = 5 \times 10^{6} pa$', r'$E = 1 \times 10^{6} pa$', r'$E = 5 \times 10^{5} pa$']  # Four-cyl
+        # elegends = ['nocyl', r'$E = 1 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$', r'$E = 1 \times 10^{4} pa$']  # One-cyl
+        # elegends = ['nocyl', r'$E = 5 \times 10^{5} pa$', r'$E = 1 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$']  # two-cyl
 
     if turbul_plot == 'on':
         fname = 'tke'
         xlocin, paramin = 2, 1
         cl = ['#762a83', 'b', '#1b7837']
         cyl_d = 0.035
-        xc = 11.2 #11.9
-        elegends = [r'$E = 5 \times 10^{6} pa$', r'$E = 1 \times 10^{6} pa$', r'$E = 5 \times 10^{5} pa$']  # Four-cyl
+        xc = 11.9 #11.9, 11.2
+        # elegends = [r'$E = 5 \times 10^{6} pa$', r'$E = 1 \times 10^{6} pa$', r'$E = 5 \times 10^{5} pa$']  # Four-cyl
         # elegends = [r'$E = 1 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$', r'$E = 1 \times 10^{4} pa$']  # One-cyl
-        # elegends = [r'$E = 5 \times 10^{5} pa$', r'$E = 1 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$']  # two-cyl
+        elegends = [r'$E = 5 \times 10^{5} pa$', r'$E = 1 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$']  # two-cyl
         # k_t = [7.8, 7.8, 7.2]  # Single-cyl
         k_t = [7, 7.4, 6.2]  # flex-four-1.5D
         # k_t = [8.6, 7, 7]  # flex-four-2D
@@ -93,11 +93,12 @@ class plots_input:
     paraview_data = 'off'
     if paraview_data == 'on':
         xloc, xlocin = 11, 10
-    pv_eta = 'off'
+    pv_eta = 'on'
     if pv_eta == 'on':
         xloc = 11
-        elegends = [r'$E = 5 \times 10^{6} pa$', r'$E = 1 \times 10^{6} pa$',
-                    r'$E = 5 \times 10^{5} pa$']
+        elegends = [r'$E = 5 \times 10^{6} pa$', r'$E = 1 \times 10^{6} pa$', r'$E = 5 \times 10^{5} pa$']  # Four-cyl
+        # elegends = [r'$E = 1 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$', r'$E = 1 \times 10^{4} pa$']  # One-cyl
+        # elegends = [r'$E = 5 \times 10^{5} pa$', r'$E = 1 \times 10^{5} pa$', r'$E = 5 \times 10^{4} pa$']  # two-cyl
     v_avg_plot = 'off'
     if v_avg_plot == 'on':
         cl = ['#762a83', 'b', '#1b7837']

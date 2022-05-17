@@ -147,15 +147,15 @@ class param_axial:
                                 break
                     jj = jj+1
             print(para)
-            self.ax1.plot(t[1:len(t)], integrate.cumtrapz(para, t) / 0.012,
+            self.ax1.plot(t[1:len(t)], integrate.cumtrapz(para, t) / 0.02,
                           color=self.color[icase], label=self.legend[icase], lw=self.lws,
                           linestyle=self.ls[icase + 1])  # tke / 0.02 ,  /0.012
             # para_alt = para[(x >= 11.1) & (x <= 12)] / 0.02
             # print(para_alt[len(para_alt) - 1])
             # linestyle=finput.ls[icase]
 
-            #self.ax1.set_xlim(11, 12.2)
-            self.ax1.set_ylim(0, 6)  # vel 1, # TKE 3
+            self.ax1.set_ylim(0, 12)
+            #self.ax1.set_ylim(0, 6)  # vel 1, # TKE 3
             # self.ax1.set_ylim(0, 1)
             # finput.ax1.set_yticks(np.arange(0, 0.36, 0.05))
             self.ax1.legend(loc='upper left', fontsize='24', frameon=False)  # 'upper left' TKE # vel 'lower right'

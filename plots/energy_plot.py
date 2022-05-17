@@ -90,8 +90,8 @@ class energy_plot:
                 print(pe[icase, :])  # KE
                 finput.ax1.set_xlim(4, 10.5)
                 finput.ax1.legend(loc='best', fontsize='24', frameon=False)
-                finput.ax1.set_ylim(50, 126)
-                finput.ax1.set_yticks(np.arange(50, 126, 25))
+                finput.ax1.set_ylim(80, 121)
+                finput.ax1.set_yticks(np.arange(80, 121, 10))
                 # finput.ax1.text(0.5, 0.9, r'$\phi^{k}_{r}$', horizontalalignment='center',
                 #                verticalalignment='center', transform=finput.ax1.transAxes)
                 # finput.ax1.text(0.5, 0.3, r'$\phi^{p}_{r}$', horizontalalignment='center',

@@ -70,7 +70,7 @@ if data_input.pv_eta == 'on':
 
     print('paraview eta plot is', data_input.pv_eta)
     from plots import pv_1d
-    src = data_input.src_dir + '1d_data/eta' + '/' + 'x' + str(data_input.xloc)
+    src = data_input.src_dir + '/' + '1d_data/eta' + '/' + 'x' + str(data_input.xloc)
     if data_input.case_type == 'rigid':
         data_input.case_dir.extend(data_input.case_rigid)
     elif data_input.case_type == 'flex':
